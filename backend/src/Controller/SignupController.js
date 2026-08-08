@@ -32,10 +32,11 @@ const signUp = async (req, res) => {
       expiresIn: "3d",
     });
 
-    return res.status(201).json(
+    return res.cookie("token",token,{
+      httpOnly:true,
+    }).status(201).json(
       new ApiResponse(201, "success", "Signup Successful", {
         user: newUser,
-        token: token,
       }),
     );
   } catch (error) {

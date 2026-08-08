@@ -2,6 +2,7 @@ import express from "express"
 import dotenv from "dotenv/config"
 import pool from "./src/Config/DBConfig.js";
 import userRoutes from "./src/Routes/userRoutes.js"
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = 3000;
@@ -12,6 +13,8 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.json());
+app.use(cookieParser())
+
 
 app.use("/api/users",userRoutes)
 
