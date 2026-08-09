@@ -1,8 +1,8 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3 from "../Config/AWSConfig.js";
 
-export const uploadToS3 = async (file) => {
-    const key = `documents/${Date.now()}-${file.originalname}`;
+export const uploadToS3 = async (file,userId) => {
+    const key = `documents/${userId}/${file.originalname}`;
 
     const command = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME,
