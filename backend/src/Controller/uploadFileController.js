@@ -20,10 +20,7 @@ const uploadFile=async(req,res)=>{
         const text=await extractText(file.buffer)
         const cleanText = text.replace(/--\s*\d+\s+of\s+\d+\s*--/g, "");
         const chunks=createChunks(cleanText,100,10)
-        console.log(chunks[0])
-          const embeding = await createEmbeding(chunks[0])
-         console.log(embeding)
-        return res.status(200);
+    
 
         const result = await(uploadToS3(file,req.user.rows[0].id))
         if(!result){
@@ -40,6 +37,15 @@ const uploadFile=async(req,res)=>{
                 402,"error","Failed to save file information",null
             ))
       }
+      const Embedquery="INSERT INTO document_chunks(document_id,chunk_text,embedding,chunk_index) VALUES ($1,$2,$3,$4)"
+      let i=0;
+      for(const chunk of chunks){
+      const embeding = await createEmbeding(chunk)
+      const vector = `[${embeding.join(",")}]`;
+       const embedResult = await pool.query(Embedquery,[dbResult.rows[0].id,chunk,vector,i])
+       i+=1;
+      }        
+
        return res.status(200).json(new ApiResponse(
                 200,"success","File uploaded successfully",dbResult.rows[0]
             )) 
