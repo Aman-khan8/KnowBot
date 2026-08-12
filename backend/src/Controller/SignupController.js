@@ -7,6 +7,7 @@ const signUp = async (req, res) => {
   try {
 
     const { name, email, password } = req.body;
+    console.log(name, email, password)
     
     const alreadyExit = await pool.query("SELECT id from users WHERE email =$1",[email]);
     if (alreadyExit.rows.length > 0) {
@@ -18,7 +19,7 @@ const signUp = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query ="INSERT INTO users(name,email,password_hash) VALUES($1,$2,$3) RETURNING *"
+    const query ="INSERT INTO users(name,email,password) VALUES($1,$2,$3) RETURNING *"
     const values=[name,email,hashedPassword]
     const result = await pool.query(query,values)
     
@@ -26,9 +27,9 @@ const signUp = async (req, res) => {
 
     // Strip password before sending
     
-    delete newUser.password_hash;
+    delete newUser.password;
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, {
       expiresIn: "3d",
     });
 

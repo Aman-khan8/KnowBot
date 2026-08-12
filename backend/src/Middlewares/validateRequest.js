@@ -16,7 +16,7 @@ const protect = async (req, res, next) => {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await pool.query("SELECT * FROM users WHERE id=$1",[decoded.id]);
-
+        
       if (!req.user) {
         return res
           .status(404)

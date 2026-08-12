@@ -5,18 +5,26 @@ import pool from "../Config/DBConfig.js"
 import createChunks from "../utility/createChunking.js"
 import extractText from "../utility/extractText.js"
 import createEmbeding from "../utility/createEmbeding.js";
+import validateBot from "../utility/validateBot.js";
 
 const uploadFile=async(req,res)=>{
 
     try{
         const file=req.file;
+        const botId=req.params.id
+        const {userId}=req.user.rows[0].id
         if(!file){
             return res.status(400).json(new ApiResposnse(
                 400,"error","No file uploaded",null
             ))
 
         }
-           
+          if(!validateBot(botId,userId)) {
+          return res.status(401).json(new ApiResposnse(
+                401,"error","you have no access over this bot",null
+            ))
+
+          }
         const text=await extractText(file.buffer)
         const cleanText = text.replace(/--\s*\d+\s+of\s+\d+\s*--/g, "");
         const chunks=createChunks(cleanText,100,10)
@@ -24,13 +32,13 @@ const uploadFile=async(req,res)=>{
 
         const result = await(uploadToS3(file,req.user.rows[0].id))
         if(!result){
-            return res.status(400).json(new ApiResponse(
-                400,"error","Failed to upload successfully",null
+            return res.status(500).json(new ApiResponse(
+                500,"error","Failed to upload successfully",null
             ))
         }
 
-       const query="INSERT INTO documents (user_id,file_name,s3_key) VALUES($1,$2,$3) RETURNING *"
-      const values=[req.user.rows[0].id,result.fileName,result.key]
+       const query="INSERT INTO documents (bot_id,file_name,s3_key) VALUES($1,$2,$3) RETURNING *"
+      const values=[botId,result.fileName,result.key]
       const dbResult=await pool.query(query,values)
       if(dbResult.rowCount===0){
         return res.status(402).json(new ApiResponse(
@@ -46,8 +54,8 @@ const uploadFile=async(req,res)=>{
        i+=1;
       }        
 
-       return res.status(200).json(new ApiResponse(
-                200,"success","File uploaded successfully",dbResult.rows[0]
+       return res.status(201).json(new ApiResponse(
+                201,"success","File uploaded successfully",dbResult.rows[0]
             )) 
     }
     catch(err){

@@ -5,6 +5,7 @@ import userRoutes from "./src/Routes/userRoutes.js"
 import cookieParser from "cookie-parser";
 import fileRoutes from "./src/Routes/fileRoutes.js"
 import protect from "./src/Middlewares/validateRequest.js";
+import botRouter from "./src/Routes/botRoutes.js";
 
 const app = express();
 const PORT = 3000;
@@ -20,6 +21,7 @@ app.use(cookieParser())
 
 app.use("/api/users",userRoutes)
 app.use("/api/files",protect,fileRoutes)
+app.use("/api/bots",protect,botRouter)
 
 // Start the server on port 3000
 app.listen(PORT, () => {

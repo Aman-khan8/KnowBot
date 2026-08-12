@@ -5,6 +5,6 @@ import deleteFile from "../Controller/deleteFileController.js"
 
 const router = express.Router()
 
-router.post("/upload",upload.single("document"),uploadFile)
+router.post("/upload/:id",upload.single("document"),uploadFile)
 router.delete("/delete/:id",deleteFile)
 export default router

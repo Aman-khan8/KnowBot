@@ -7,14 +7,14 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await Pool.query("SELECT id,password_hash FROM users WHERE email=$1",[email]);
+    const user = await Pool.query("SELECT id,password FROM users WHERE email=$1",[email]);
     if (user.rows.length ===0) {
       return res
         .status(400)
         .json(new ApiResponse(400, "error", "Email is not registered", null));
     }
 
-    const isPassCorrect = await bcrypt.compare(password, user.rows[0].password_hash);
+    const isPassCorrect = await bcrypt.compare(password, user.rows[0].password);
     if (!isPassCorrect) {
       return res
         .status(400)
@@ -26,7 +26,7 @@ const login = async (req, res) => {
     });
 
     const loggedInUser = user.rows[0];
-    delete loggedInUser.password_hash;
+    delete loggedInUser.password;
 
     return res.cookie("token",token,{httpOnly:true,secure:false}).status(200).json(
       new ApiResponse(200, "success", "Login Successful", {
@@ -34,10 +34,10 @@ const login = async (req, res) => {
       }),
     );
   } catch (err) {
-    console.error("Login Error:", err);
+    
     return res
       .status(500)
-      .json(new ApiResponse(500, "error", "Login Failed", null));
+      .json(new ApiResponse(500, "error", err.message, null));
   }
 };
 
