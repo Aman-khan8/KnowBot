@@ -21,7 +21,7 @@ app.use(cookieParser())
 
 app.use("/api/users",userRoutes)
 app.use("/api/files",protect,fileRoutes)
-app.use("/api/bots",protect,botRouter)
+app.use("/api/bots",botRouter)
 
 // Start the server on port 3000
 app.listen(PORT, () => {
