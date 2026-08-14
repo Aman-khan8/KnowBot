@@ -3,8 +3,6 @@ import ApiResponse from "../utility/ApiResponse.js";
 const createBot=async(req,res)=>{
     try {
          const {name,businessName,des}=req.body
-         console.log(name,businessName,des)
-       //  console.log(req.user.rows[0].id)
          const userId=req.user.rows[0].id
           const query = "INSERT INTO bots(user_id,name,business_name,description) VALUES($1,$2,$3,$4) RETURNING *"
         const values=[userId,name,businessName,des]
