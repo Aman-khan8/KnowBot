@@ -4,7 +4,7 @@ import ApiResponse from "../utility/ApiResponse.js"
 const getDocuments=async(req,res)=>{
     try {
         const {botId}= req.body
-        const query = "SELECT * FROM documents WHERE bot_id=$1"
+        const query = "SELECT id,bot_id,file_name FROM documents WHERE bot_id=$1"
         const response=await pool.query(query,[botId])
            
                 
