@@ -12,15 +12,15 @@ const uploadFile=async(req,res)=>{
     try{
         const file=req.file;
         const botId=req.params.id
-        const {userId}=req.user.rows[0].id
+        const userId=req.user.rows[0].id
         if(!file){
-            return res.status(400).json(new ApiResposnse(
+            return res.status(400).json(new ApiResponse(
                 400,"error","No file uploaded",null
             ))
 
         }
           if(!validateBot(botId,userId)) {
-          return res.status(401).json(new ApiResposnse(
+          return res.status(401).json(new ApiResponse(
                 401,"error","you have no access over this bot",null
             ))
 

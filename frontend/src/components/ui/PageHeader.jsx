@@ -1,0 +1,15 @@
+import React from 'react'
+
+export default function PageHeader({ title, description, action }) {
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
+      <div>
+        <h1 className="text-[24px] font-semibold text-[#F5F5F5] leading-tight">{title}</h1>
+        {description && (
+          <p className="text-sm text-[#A1A1AA] mt-1">{description}</p>
+        )}
+      </div>
+      {action && <div className="shrink-0">{action}</div>}
+    </div>
+  )
+}
